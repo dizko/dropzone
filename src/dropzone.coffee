@@ -200,6 +200,12 @@ class Dropzone extends Emitter
     # If false, previews won't be rendered.
     previewsContainer: null
 
+    #Adds the option to have the preview element be placed at the start of the list.
+    #This is good if you're using drop zone to add files to an exsisting list of files.
+    #If true, it will change the output to insert before vs appending.
+    #If false the behavior will append to the end of the list.
+    insertPreviewAtStart: false
+
     # Selector for hidden input container
     hiddenInputContainer: "body"
 
@@ -382,7 +388,10 @@ class Dropzone extends Emitter
         file.previewElement = Dropzone.createElement @options.previewTemplate.trim()
         file.previewTemplate = file.previewElement # Backwards compatibility
 
-        @previewsContainer.appendChild file.previewElement
+        if @options.insertPreviewAtStart
+          @previewsContainer.insertBefore(file.previewElement, @previewsContainer.childNodes[0])
+        else
+          @previewsContainer.appendChild file.previewElement
         node.textContent = @_renameFilename(file.name, file) for node in file.previewElement.querySelectorAll("[data-dz-name]")
         node.innerHTML = @filesize file.size for node in file.previewElement.querySelectorAll("[data-dz-size]")
 
